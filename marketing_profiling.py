@@ -54,5 +54,5 @@ class DataGenerator:
 
 myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
-myDataFrame.to_csv('bouced_dataset.csv', index = False)
-myDataFrame.to_excel('bounced_dataset.xlsx', index = False)
+myDataFrame.to_csv('marketing_profiling.csv', index = False)
+myDataFrame.to_excel('marketing_profiling.xlsx', index = False)
