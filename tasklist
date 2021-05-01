@@ -1,0 +1,8 @@
+(Saturday)
+1) 4 basic files 
+2) check data pipeline by data processing - created HA score(final) table
+3) check interdependency in data
+4) if everything is okay -> run data generator on servers
+
+(Sunday)
+5) meanwhile work on spark application 
