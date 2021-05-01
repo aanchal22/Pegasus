@@ -3,6 +3,8 @@ import numpy as np
 from pydbgen import pydbgen
 import matplotlib.pyplot as plt
 
+pr = [0.63,0.37]
+
 class DataGenerator:
     def __init__(self, datasetSize = 1):
         self.pyDb = pydbgen.pydb()
@@ -43,11 +45,6 @@ class DataGenerator:
     	checkInDateArr = np.datetime64('today') + randomInt
     	return (checkInDateArr)
 
-    def getCheckOut(self, size, low = 0, high = 30):
-    	randomInt = np.random.uniform(low, high, size).astype(int)
-    	checkOutDateArr = np.datetime64('today') + randomInt
-    	return (checkOutDateArr)
-
     # Generate complete dataset with properties containing array of described values
     def genDataset(self):
         size = self.datasetSize
@@ -58,13 +55,35 @@ class DataGenerator:
             'DeviceID' : self.getDeviceID(size),
             'Flavor' : self.getFlavor(size),
             'CheckIn' : self.getCheckIn(size),
-            'CheckOut' : self.getCheckOut(size),
-            'NumOfPeople' : self.getNumOfPeople(size),
-            'NumOfRooms' : self.getNumOfRooms(size)
+            'NumOfPeople' : self.getNumOfPeople(size)
         }
         return (pd.DataFrame(data))
 
 myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
+
+# insert NumOfRooms in the excel
+myDataFrame.insert(loc = 7, column = 'NumofRooms', value = 0)
+
+for i in range(10000):
+	x = myDataFrame.loc[i, 'NumOfPeople']
+	if(x%2==0):
+		y=x/2
+		levels = [y,x]
+	else:
+		y=(x/2)+1
+		levels = [y,x]
+
+	myDataFrame.loc[i, 'NumofRooms'] = np.random.choice(levels, size = 1, p = pr).astype(int)
+
+#insert Checkout in the excel
+myDataFrame.insert(loc = 6, column = 'CheckOut', value = 0)
+
+for i in range(10000):
+	x = myDataFrame.loc[i, 'CheckIn']
+	randomInt = np.random.randint(1,30)
+
+	myDataFrame.loc[i, 'CheckOut'] = x + np.timedelta64(randomInt, 'D')
+
 myDataFrame.to_csv('bouced_dataset.csv', index = False)
 myDataFrame.to_excel('bounced_dataset.xlsx', index = False)
