@@ -84,12 +84,18 @@ myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
 
 #insert UserName in excel
-username = pd.read_csv('username.csv')['UserName'].to_list()
+#insert UserName in excel
+# username = pd.read_csv('username.csv')['UserName'].to_numpy()
 
-myDataFrame.insert(loc = 0, column = 'UserName', value = 0)
+# myDataFrame.insert(loc = 0, column = 'UserName', value = 0)
 
-for i in range(100):
-    myDataFrame.loc[i, 'UserName'] = np.random.choice(username)
+# for i in range(100):
+#     myDataFrame.loc[i, 'UserName'] = np.random.choice(username)
+
+
+#insert UserName in excel
+username = pd.read_csv('username.csv')['UserName'].to_numpy()
+myDataFrame.insert(loc = 0, column = 'UserName', value = np.random.choice(username, size = 10000, replace=True) )
 
 
 # insert NumOfRooms in the excel

@@ -36,8 +36,7 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-
-BouncedDataDF = pd.read_csv("bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut"])
+BouncedDataDF = pd.read_csv("bounced_dataset.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut"])
 
 BouncedDataDF_filtered = BouncedDataDF[BouncedDataDF['BouncedAt'] == 0]
 DFsize = BouncedDataDF_filtered.size()
@@ -56,7 +55,7 @@ cityname = np.unique(cityname)
 myDataFrame.insert(loc = 1, column = 'CityName', value = 0)
 myDataFrame.insert(loc = 2, column = 'HotelName', value = 0)
 
-for i in range(100):
+for i in range(10000):
     myDataFrame.loc[i, 'CityName'] = np.random.choice(cityname)
     myDataFrame.loc[i, 'HotelName'] = np.random.choice(hotelname)
 
