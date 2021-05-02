@@ -36,6 +36,7 @@ DFsize = len(BouncedDataDF_filtered)
 myDataGen = DataGenerator(DFsize)
 myDataFrame = myDataGen.genDataset()
 
+BouncedDataDF_filtered.loc[:, 'RoomNights'] = (pd.to_datetime(BouncedDataDF_filtered['CheckOut'], format="%Y-%m-%d") - pd.to_datetime(BouncedDataDF_filtered['CheckIn'], format="%Y-%m-%d")).dt.days
 BouncedDataDF_filtered.loc[:, 'BookingAmount'] = myDataFrame['BookingAmount']
 BouncedDataDF_filtered.loc[:, 'BookingID'] = myDataFrame['BookingID']
 df = BouncedDataDF_filtered.drop(columns=['index', 'BouncedAt'])
