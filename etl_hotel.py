@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
 import matplotlib.pyplot as plt
+import uuid
 
 class DataGenerator:
     def __init__(self, datasetSize = 1):
