@@ -49,4 +49,3 @@ CityDF = pd.read_csv("city_dataset.csv", usecols = ["CityName"])
 myDataFrame.insert(loc = 0, column = 'CityName', value = CityDF)
 
 myDataFrame.to_csv('etl_hotel.csv', index = False)
-myDataFrame.to_excel('etl_hotel.xlsx', index = False)

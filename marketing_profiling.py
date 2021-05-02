@@ -50,7 +50,7 @@ class DataGenerator:
 
 myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
-UserNameDF = pd.read_csv("bouced_dataset.csv", usecols = ["UserName"])
+UserNameDF = pd.read_csv("bounced_dataset.csv", usecols = ["UserName"])
 myDataFrame.insert(loc = 0, column = 'UserName', value = UserNameDF)
+
 myDataFrame.to_csv('marketing_profiling.csv', index = False)
-myDataFrame.to_excel('marketing_profiling.xlsx', index = False)

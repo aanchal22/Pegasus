@@ -25,7 +25,6 @@ class DataGenerator:
         }
         return (pd.DataFrame(data))
 
-myDataGen = DataGenerator(10000)
+myDataGen = DataGenerator(1000)
 myDataFrame = myDataGen.genDataset()
 myDataFrame.to_csv('city_dataset.csv', index = False)
-myDataFrame.to_excel('city_dataset.xlsx', index = False)
