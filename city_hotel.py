@@ -12,7 +12,7 @@ CityDF.insert(loc = 1, column = 'HotelName', value = 0)
 CityDF.insert(loc = 2, column = 'City', value = 0)
 c = 0
 
-for i in range(1000):
+for i in range(2000):
     x = CityDF.loc[i, 'CityName']
     for j in range (5):
         CityDF.loc[c + (i+j),'HotelName'] = HotelName[j]
