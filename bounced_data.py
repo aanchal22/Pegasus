@@ -21,8 +21,33 @@ class DataGenerator:
     # Generate array of random timestamps
     def getTimeStamp(self, size, low = 0, high = 365):
         randomInt = np.random.uniform(low, high, size).astype(int)
+        randomHr = np.random.randint(0,24,size)
+        randomMin = np.random.randint(0,60,size)
+        randomSec = np.random.randint(0,60,size)
+
+        randomHr = pd.DataFrame(randomHr)
+        randomHr.rename( columns={0 :'I'}, inplace=True )
+        randomHr['I'] = randomHr['I'].astype(str)
+        randomHr.loc[(randomHr['I'].str.len() == 1), 'I'] = '0' + randomHr['I'].astype(str)
+
+        randomMin = pd.DataFrame(randomMin)
+        randomMin.rename( columns={0 :'I'}, inplace=True )
+        randomMin['I'] = randomMin['I'].astype(str)
+        randomMin.loc[(randomMin['I'].str.len() == 1), 'I'] = '0' + randomMin['I'].astype(str)
+
+        randomSec = pd.DataFrame(randomSec)
+        randomSec.rename( columns={0 :'I'}, inplace=True )
+        randomSec['I'] = randomSec['I'].astype(str)
+        randomSec.loc[(randomSec['I'].str.len() == 1), 'I'] = '0' + randomSec['I'].astype(str)
+        randomTime = randomHr['I'] + ':' + randomMin['I'] + ':' + randomSec['I']
+        randomTime = randomTime.to_numpy()
+
         timeArr = np.datetime64('today') - randomInt
-        return (timeArr)
+        timeArr = np.datetime_as_string(timeArr)
+
+        arr_list = [timeArr, randomTime]
+        final_time_arr = np.apply_along_axis(' '.join, 0, arr_list)
+        return (final_time_arr)
 
     # Generate array of random device ID's
     def getDeviceID(self, size):
@@ -83,7 +108,7 @@ for i in range(10000):
 	x = myDataFrame.loc[i, 'CheckIn']
 	randomInt = np.random.randint(1,30)
 
-	myDataFrame.loc[i, 'CheckOut'] = x + np.timedelta64(randomInt, 'D')
+	myDataFrame.loc[i, 'CheckOut'] = (x + np.timedelta64(randomInt, 'D')).date()
 
 myDataFrame.to_csv('bouced_dataset.csv', index = False)
-myDataFrame.to_excel('bounced_dataset.xlsx', index = False)
+# myDataFrame.to_excel('bounced_dataset.xlsx', index = False)x
