@@ -1,3 +1,8 @@
-pydbgen
-pandas
-numpy
+Faker==8.1.2
+numpy==1.20.2
+pandas==1.2.4
+pydbgen==1.0.5
+python-dateutil==2.8.1
+pytz==2021.1
+six==1.15.0
+text-unidecode==1.3
