@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
 import matplotlib.pyplot as plt
+import csv
 
 pr = [0.63,0.37]
 
@@ -9,10 +10,6 @@ class DataGenerator:
     def __init__(self, datasetSize = 1):
         self.pyDb = pydbgen.pydb()
         self.datasetSize = datasetSize
-
-    # Generate array of fake user email addresses
-    def getUserName(self, size):
-        return (np.array([self.pyDb.fake.email() for i in range(size)]))
 
     # Generate array of bounced-at levels, select b/w 0 & 1
     def getBouncedAt(self, size, levels = [0, 1], prob = [0.5,0.5]):
@@ -74,7 +71,6 @@ class DataGenerator:
     def genDataset(self):
         size = self.datasetSize
         data = {
-            'UserName' : self.getUserName(size),
             'BouncedAt' : self.getBouncedAt(size),
             'TimeStamp' : self.getTimeStamp(size),
             'DeviceID' : self.getDeviceID(size),
@@ -86,6 +82,19 @@ class DataGenerator:
 
 myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
+
+#insert UserName in excel
+username = []
+with open('username.csv') as csvDataFile:
+        csvReader = csv.reader(csvDataFile)
+        for row in csvReader:
+            username.append(row[0])
+
+myDataFrame.insert(loc = 0, column = 'UserName', value = 0)
+
+for i in range(10000):
+    myDataFrame.loc[i, 'UserName'] = np.random.choice(username)
+
 
 # insert NumOfRooms in the excel
 myDataFrame.insert(loc = 7, column = 'NumofRooms', value = 0)
