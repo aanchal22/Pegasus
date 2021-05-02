@@ -25,6 +25,6 @@ class DataGenerator:
         }
         return (pd.DataFrame(data))
 
-myDataGen = DataGenerator(1000)
+myDataGen = DataGenerator(2000)
 myDataFrame = myDataGen.genDataset()
 myDataFrame.to_csv('city_dataset.csv', index = False)
