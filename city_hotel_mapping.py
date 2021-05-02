@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 HotelName = ['Palm Woods', 'The Robe Hotel', 'Hotel City Lake', 'The Pink Sheet', 'Carpe Diem']
 
-CityDF = pd.read_csv("city_dataset.csv", usecols = ["CityName"])
+CityDF = pd.read_csv("city_master.csv", usecols = ["CityName"])
 
 # insert NumOfRooms in the excel
 CityDF.insert(loc = 1, column = 'HotelName', value = 0)
@@ -21,4 +21,4 @@ for i in range(2000):
 
 CityDF = CityDF.drop(columns = ['CityName'])
 
-CityDF.to_csv('city_hotel.csv', index = False)
+CityDF.to_csv('city_hotel_mapping.csv', index = False)

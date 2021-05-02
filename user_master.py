@@ -20,4 +20,4 @@ class UserNameGenerator:
 
 usernameGen = UserNameGenerator(1000000)
 usernameDF = usernameGen.genDataset()
-usernameDF.to_csv('username.csv', index = False)
+usernameDF.to_csv('user_master.csv', index = False)
