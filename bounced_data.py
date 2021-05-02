@@ -115,4 +115,13 @@ for i in range(10000):
 
 	myDataFrame.loc[i, 'CheckOut'] = (x + np.timedelta64(randomInt, 'D')).date()
 
+
+#add cityname
+cityname = pd.read_csv('city_dataset.csv')['CityName'].to_list()
+
+myDataFrame.insert(loc = 5, column = 'CityName', value = 0)
+
+for i in range(10000):
+    myDataFrame.loc[i, 'CityName'] = np.random.choice(cityname)
+
 myDataFrame.to_csv('bounced_dataset.csv', index = False)
