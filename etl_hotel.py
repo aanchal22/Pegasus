@@ -22,7 +22,7 @@ class DataGenerator:
 
     
     def getTransactionID(self, size):
-        return 0
+        return [str(uuid.uuid4()) for _ in range(size)]
 
     
     def getBookingDate(self, size, low = 0, high = 365):
