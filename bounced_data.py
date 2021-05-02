@@ -86,7 +86,7 @@ class DataGenerator:
         size = self.datasetSize
         data = {
             'BouncedAt': self.getBouncedAt(size),
-            'Username': self.getUserName(size),
+            'UserName': self.getUserName(size),
             'CityName': self.getCityName(size),
             'TimeStamp': self.getTimeStamp(size),
             'DeviceID': self.getDeviceID(size),
