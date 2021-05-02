@@ -27,4 +27,4 @@ class DataGenerator:
 
 myDataGen = DataGenerator(2000)
 myDataFrame = myDataGen.genDataset()
-myDataFrame.to_csv('city_master.csv', index = False)
+myDataFrame.to_csv('other_data/city_master.csv', index = False)

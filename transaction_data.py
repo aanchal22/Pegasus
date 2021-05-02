@@ -27,7 +27,7 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-BouncedDataDF = pd.read_csv("bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName"])
+BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName"])
 
 BouncedDataDF_filtered = BouncedDataDF[BouncedDataDF['BouncedAt'] == 0]
 BouncedDataDF_filtered = BouncedDataDF_filtered.reset_index()
@@ -42,7 +42,7 @@ BouncedDataDF_filtered.loc[:, 'BookingID'] = myDataFrame['BookingID']
 df = BouncedDataDF_filtered.drop(columns=['index', 'BouncedAt'])
 
 #add hotelname to the file
-hotelname = pd.read_csv('city_hotel_mapping.csv')['HotelName'].to_numpy()
+hotelname = pd.read_csv('other_data/city_hotel_mapping.csv')['HotelName'].to_numpy()
 df.insert(loc = 4, column = 'HotelName', value = np.random.choice(hotelname, size = DFsize, replace=True))
 
-df.to_csv('transaction_data.csv', index = False)
+df.to_csv('transaction_data/transaction_data.csv', index = False)

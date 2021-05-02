@@ -12,8 +12,8 @@ class DataGenerator:
     def __init__(self, datasetSize=1):
         self.pyDb = pydbgen.pydb()
         self.datasetSize = datasetSize
-        self.cityname = pd.read_csv('city_master.csv')['CityName'].to_numpy()
-        self.username = pd.read_csv('user_master.csv')['UserName'].to_numpy()
+        self.cityname = pd.read_csv('other_data/city_master.csv')['CityName'].to_numpy()
+        self.username = pd.read_csv('other_data/user_master.csv')['UserName'].to_numpy()
 
     # Generate array of bounced-at levels, select b/w 0 & 1
     def getBouncedAt(self, size, levels=[0, 1], prob=[0.5, 0.5]):
@@ -116,4 +116,4 @@ del room_calculator
 # insert Checkout to the dataframe
 myDataFrame['CheckOut'] = (myDataFrame['CheckIn'] + np.timedelta64(30, 'D'))
 
-myDataFrame.to_csv('bounced_data.csv', index=False)
+myDataFrame.to_csv('bounced_data/bounced_data.csv', index=False)
