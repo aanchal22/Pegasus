@@ -6,3 +6,48 @@
 
 (Sunday)
 5) meanwhile work on spark application 
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+PIAZZA
+------------------------------------------------------------------------------------------------------------------------------------------
+Details for the class project submission in addition to what is in the pdf.
+
+- Presentation slides (which will be presented May 5th) as a pdf that explain your project and results.
+- a tar-archive that can be unpacked on Peel that contains a directory whose name is the team name.
+This directory should contain
+- the analysis part which has to run on Peel via
+~ cd into the directory
+~ run a spark submission command that is provided when being in that directory
+! Make sure your data in HDFS for the test run give read access to the TAs and myself !
+The program has to produce results that match the description in your presentation, i.e. human readable.
+- A data generation program with instructions on how to run for a smaller case. This should run on Peel as well (as per the original instructions)
+
+The test run instructions should complete within 2 minutes.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+PIAZZA
+------------------------------------------------------------------------------------------------------------------------------------------
+
+You should generate data from scratch. You can use python, java, numpy or other model packages you have access tothat generate data, but it should be generated so that you can change the size, number of dimensions etc.
+
+
+We used a function in python as our 'ground truth'  y = f( \vector{x}). Then we added redundant dimensions z[j]
+where the contribution was 0*z[j] (i.e. no contribution) and added noise from a random source to all dimensions.
+Varying the magnitude of the noise and having different amounts of noise in redundant dimensions vs significant one
+is a good parameterization.
+You can also introduce a function as 'obstacle', e.g. for our example a high frequency periodic function.
+Next you can turn some of the dimensions into text (create a vocabulary that matches words to integers 0..N
+and then match the floating point numbers to the integers by projecting (map floating point range to integer range
+and then round).You can introduce measurement failures by having invalid entries (no word or one not in the vocab, no number but
+e.g. a 'nan' or something really huge, ...). Distribute the data over a few tables and write them as json and csv files.
+
+Now you have a problem you can try to solve with a scala/spark program
+- Do ETL, i.e. read the tables, join, zip etc. to get the data into a form that you can use an analysis algorithm
+- Clean the data, i.e. identify unreasonable or missing entries and replace them with something else
+- If your data allows, use statistics for noise reduction, PCA etc. to create a dataset that you can
+  run through an algorithm to make a model or classify
+- then run it through that alg
+- vary your noise, dimensions etc. to find out where your approach starts to fail, and then tweak your
+  approach to make it still work for a higher level of distortion.
