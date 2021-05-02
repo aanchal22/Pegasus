@@ -84,15 +84,11 @@ myDataGen = DataGenerator(10000)
 myDataFrame = myDataGen.genDataset()
 
 #insert UserName in excel
-username = []
-with open('username.csv') as csvDataFile:
-        csvReader = csv.reader(csvDataFile)
-        for row in csvReader:
-            username.append(row[0])
+username = pd.read_csv('username.csv')['UserName'].to_list()
 
 myDataFrame.insert(loc = 0, column = 'UserName', value = 0)
 
-for i in range(10000):
+for i in range(100):
     myDataFrame.loc[i, 'UserName'] = np.random.choice(username)
 
 
