@@ -1,42 +1,59 @@
 import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
-import matplotlib.pyplot as plt
+import math
 import csv
 
-pr = [0.63,0.37]
+pr = [0.63, 0.37]
+size = 10000
+
 
 class DataGenerator:
-    def __init__(self, datasetSize = 1):
+    def __init__(self, datasetSize=1):
         self.pyDb = pydbgen.pydb()
         self.datasetSize = datasetSize
+        self.cityname = pd.read_csv('city_dataset.csv')['CityName'].to_numpy()
+        self.username = pd.read_csv('username.csv')['UserName'].to_numpy()
 
     # Generate array of bounced-at levels, select b/w 0 & 1
-    def getBouncedAt(self, size, levels = [0, 1], prob = [0.5,0.5]):
-        return (np.random.choice(levels, size = size, p = prob))
+    def getBouncedAt(self, size, levels=[0, 1], prob=[0.5, 0.5]):
+        return (np.random.choice(levels, size=size, p=prob))
+
+
+    # Generate array of usernames from username dataset
+    def getUserName(self, size):
+        return (np.random.choice(self.username, size=size, replace=True))
+
+    # Generate array of citynames from city dataset table
+    def getCityName(self, size):
+        return (np.random.choice(self.cityname, size=size, replace=True))
 
     # Generate array of random timestamps
-    def getTimeStamp(self, size, low = 0, high = 365):
+    def getTimeStamp(self, size, low=0, high=365):
         randomInt = np.random.uniform(low, high, size).astype(int)
-        randomHr = np.random.randint(0,24,size)
-        randomMin = np.random.randint(0,60,size)
-        randomSec = np.random.randint(0,60,size)
+        randomHr = np.random.randint(0, 24, size)
+        randomMin = np.random.randint(0, 60, size)
+        randomSec = np.random.randint(0, 60, size)
 
         randomHr = pd.DataFrame(randomHr)
-        randomHr.rename( columns={0 :'I'}, inplace=True )
+        randomHr.rename(columns={0: 'I'}, inplace=True)
         randomHr['I'] = randomHr['I'].astype(str)
-        randomHr.loc[(randomHr['I'].str.len() == 1), 'I'] = '0' + randomHr['I'].astype(str)
+        randomHr.loc[(randomHr['I'].str.len() == 1),
+                     'I'] = '0' + randomHr['I'].astype(str)
 
         randomMin = pd.DataFrame(randomMin)
-        randomMin.rename( columns={0 :'I'}, inplace=True )
+        randomMin.rename(columns={0: 'I'}, inplace=True)
         randomMin['I'] = randomMin['I'].astype(str)
-        randomMin.loc[(randomMin['I'].str.len() == 1), 'I'] = '0' + randomMin['I'].astype(str)
+        randomMin.loc[(randomMin['I'].str.len() == 1),
+                      'I'] = '0' + randomMin['I'].astype(str)
 
         randomSec = pd.DataFrame(randomSec)
-        randomSec.rename( columns={0 :'I'}, inplace=True )
+        randomSec.rename(columns={0: 'I'}, inplace=True)
         randomSec['I'] = randomSec['I'].astype(str)
-        randomSec.loc[(randomSec['I'].str.len() == 1), 'I'] = '0' + randomSec['I'].astype(str)
-        randomTime = randomHr['I'] + ':' + randomMin['I'] + ':' + randomSec['I']
+        randomSec.loc[(randomSec['I'].str.len() == 1),
+                      'I'] = '0' + randomSec['I'].astype(str)
+        randomTime = randomHr['I'] + ':' + \
+            randomMin['I'] + ':' + randomSec['I']
         randomTime = randomTime.to_numpy()
 
         timeArr = np.datetime64('today') - randomInt
@@ -48,86 +65,55 @@ class DataGenerator:
 
     # Generate array of random device ID's
     def getDeviceID(self, size):
-        return (np.random.randint(1000000,10000000, size=size))
+        return (np.random.randint(1000000, 10000000, size=size))
 
     # Generate array of device OS
-    def getFlavor(self, size, levels = ['Android','IOS'], prob = [0.6,0.4]):
-        return (np.random.choice(levels, size = size, p = prob))
+    def getFlavor(self, size, levels=['Android', 'IOS'], prob=[0.6, 0.4]):
+        return (np.random.choice(levels, size=size, p=prob))
 
     # Generate array with int values specifying number of people
     def getNumOfPeople(self, size):
-        return (np.random.randint(1,10,size=size))
+        return (np.random.randint(1, 10, size=size))
 
-    # Generate array with int values specifying number of rooms
-    def getNumOfRooms(self, size):
-        return (np.random.randint(1,10,size = size))
-
-    def getCheckIn(self, size, low = 0, high = 120):
-    	randomInt = np.random.uniform(low, high, size).astype(int)
-    	checkInDateArr = np.datetime64('today') + randomInt
-    	return (checkInDateArr)
+    # Generate array of Checkin Dates
+    def getCheckIn(self, size, low=0, high=120):
+        randomInt = np.random.uniform(low, high, size).astype(int)
+        checkInDateArr = np.datetime64('today') + randomInt
+        return (checkInDateArr)
 
     # Generate complete dataset with properties containing array of described values
     def genDataset(self):
         size = self.datasetSize
         data = {
-            'BouncedAt' : self.getBouncedAt(size),
-            'TimeStamp' : self.getTimeStamp(size),
-            'DeviceID' : self.getDeviceID(size),
-            'Flavor' : self.getFlavor(size),
-            'CheckIn' : self.getCheckIn(size),
-            'NumOfPeople' : self.getNumOfPeople(size)
+            'BouncedAt': self.getBouncedAt(size),
+            'Username': self.getUserName(size),
+            'CityName': self.getCityName(size),
+            'TimeStamp': self.getTimeStamp(size),
+            'DeviceID': self.getDeviceID(size),
+            'Flavor': self.getFlavor(size),
+            'CheckIn': self.getCheckIn(size),
+            'NumOfPeople': self.getNumOfPeople(size)
         }
         return (pd.DataFrame(data))
 
-myDataGen = DataGenerator(10000)
+
+myDataGen = DataGenerator(size)
 myDataFrame = myDataGen.genDataset()
 
-#insert UserName in excel
-#insert UserName in excel
-# username = pd.read_csv('username.csv')['UserName'].to_numpy()
 
-# myDataFrame.insert(loc = 0, column = 'UserName', value = 0)
-
-# for i in range(100):
-#     myDataFrame.loc[i, 'UserName'] = np.random.choice(username)
-
-
-#insert UserName in excel
-username = pd.read_csv('username.csv')['UserName'].to_numpy()
-myDataFrame.insert(loc = 0, column = 'UserName', value = np.random.choice(username, size = 10000, replace=True) )
+# insert NumOfRooms to the dataframe
+room_calculator = pd.DataFrame(data={'People': myDataFrame['NumOfPeople']})
+room_calculator['People_2'] = (
+    room_calculator['People']/2).apply(np.ceil).astype(int)
+room_calculator['range'] = [
+    list(range(i, j+1)) for i, j in room_calculator[['People_2', 'People']].values]
+room_calculator.drop(['People_2', 'People'], axis=1)
+room_calculator['Rooms'] = room_calculator['range'].apply(np.random.choice)
+myDataFrame['NumofRooms'] = room_calculator['Rooms']
+del room_calculator
 
 
-# insert NumOfRooms in the excel
-myDataFrame.insert(loc = 7, column = 'NumofRooms', value = 0)
+# insert Checkout to the dataframe
+myDataFrame['CheckOut'] = (myDataFrame['CheckIn'] + np.timedelta64(30, 'D'))
 
-for i in range(10000):
-	x = myDataFrame.loc[i, 'NumOfPeople']
-	if(x%2==0):
-		y=x/2
-		levels = [y,x]
-	else:
-		y=(x/2)+1
-		levels = [y,x]
-
-	myDataFrame.loc[i, 'NumofRooms'] = np.random.choice(levels, size = 1, p = pr).astype(int)
-
-#insert Checkout in the excel
-myDataFrame.insert(loc = 6, column = 'CheckOut', value = 0)
-
-for i in range(10000):
-	x = myDataFrame.loc[i, 'CheckIn']
-	randomInt = np.random.randint(1,30)
-
-	myDataFrame.loc[i, 'CheckOut'] = (x + np.timedelta64(randomInt, 'D')).date()
-
-
-#add cityname
-cityname = pd.read_csv('city_dataset.csv')['CityName'].to_list()
-
-myDataFrame.insert(loc = 5, column = 'CityName', value = 0)
-
-for i in range(10000):
-    myDataFrame.loc[i, 'CityName'] = np.random.choice(cityname)
-
-myDataFrame.to_csv('bounced_dataset.csv', index = False)
+myDataFrame.to_csv('bounced_dataset.csv', index=False)
