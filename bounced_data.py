@@ -110,5 +110,4 @@ for i in range(10000):
 
 	myDataFrame.loc[i, 'CheckOut'] = (x + np.timedelta64(randomInt, 'D')).date()
 
-myDataFrame.to_csv('bouced_dataset.csv', index = False)
-# myDataFrame.to_excel('bounced_dataset.xlsx', index = False)x
+myDataFrame.to_csv('bounced_dataset.csv', index = False)
