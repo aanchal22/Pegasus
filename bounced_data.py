@@ -114,6 +114,7 @@ del room_calculator
 
 
 # insert Checkout to the dataframe
-myDataFrame['CheckOut'] = (myDataFrame['CheckIn'] + np.timedelta64(30, 'D'))
+randomInt = np.random.randint(1,30)
+myDataFrame['CheckOut'] = (myDataFrame['CheckIn'] + np.timedelta64(randomInt, 'D'))
 
 myDataFrame.to_csv('bounced_data/bounced_data.csv', index=False)
