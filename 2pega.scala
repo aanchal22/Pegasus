@@ -71,7 +71,8 @@ up_df.createOrReplaceTempView("user_profile")
 val user_profile_1 = "SELECT user, CASE WHEN inactivity_ratio IS NULL THEN 'Not_Available' ELSE CASE WHEN inactivity_ratio > 1 THEN 'very_low' WHEN inactivity_ratio BETWEEN 0.76 AND 1 THEN 'low' WHEN inactivity_ratio BETWEEN 0.51 AND 0.75 THEN 'mid' WHEN inactivity_ratio BETWEEN 0.26 AND 0.5 THEN 'high' WHEN inactivity_ratio BETWEEN 0 AND 0.25 THEN 'very_high' END END as activity, CASE WHEN num_searches!=0 THEN CASE WHEN float(num_searches)>0.5 THEN 1 ELSE 0 END ELSE 0 END AS dh_oriented_search, CASE WHEN num_txn!=0 THEN CASE WHEN float(num_txn)>0.5 THEN 1 ELSE 0 END ELSE 0 END AS dh_oriented_txn FROM user_profile"
 sqlCtx.sql(user_profile_1).createOrReplaceTempView("profiling_data_1")
 
-val user_profile_2 = "SELECT * FROM (SELECT * FROM (SELECT user, loyalty_bucket, first_txn_date FTD FROM user_profile WHERE user IS NOT NULL GROUP BY 1,2,3) a left join profiling_data_1"
+//val user_profile_2 = "SELECT * FROM (SELECT * FROM (SELECT user, loyalty_bucket, first_txn_date FROM user_profile WHERE user IS NOT NULL GROUP BY 1,2,3) a left join profiling_data_1"
+val user_profile_2= "SELECT * FROM (SELECT * FROM (SELECT user, loyalty_bucket, first_txn_date FROM user_profile WHERE user IS NOT NULL GROUP BY 1,2,3) a left join profiling_data_1 b using (user))"
 sqlCtx.sql(user_profile_2).createOrReplaceTempView("profiling_data")
 
 
