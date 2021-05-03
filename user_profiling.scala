@@ -58,5 +58,5 @@ df_j = df_j.withColumn("inactivity_ratio", col("dfftd.datediff") / col("adgbt"))
 
 df_j = df_j.withColumn("loyalty_bucket", when($"dftxn.num_txn" >= 5, "Gold").otherwise(when($"dftxn.num_txn" > 2 && $"dftxn.num_txn" < 5, "Silver").otherwise(when($"dftxn.num_txn" < 2 && $"dftxn.num_txn" > 0, "Bronze").otherwise("New"))))
 
-df_j.write.csv("Pegasus/other_data/user_profiling.csv")
+df_j.write.mode("overwrite").csv("Pegasus/user_profiling/")
 
