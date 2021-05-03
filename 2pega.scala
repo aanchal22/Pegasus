@@ -67,4 +67,3 @@ sqlCtx.sql(hotel_city_map).createOrReplaceTempView("hotel_search")
 transaction_df.createOrReplaceTempView("transaction_data")
 val transaction_data = "Select HotelName, BookingAmount/RoomNights as ASP_Amount from transaction_data"
 sqlCtx.sql(transaction_data).createOrReplaceTempView("book_asp")
-
