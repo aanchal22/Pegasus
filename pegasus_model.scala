@@ -23,7 +23,7 @@ var model_df = spark.read.schema(modelSchema).csv("/user/ak8257/Pegasus/pegasus_
 model_df = model_df.withColumnRenamed("_c0","userid").withColumnRenamed("_c1","super_userid").withColumnRenamed("_c2","ap_bucket").withColumnRenamed("_c3","city_type").withColumnRenamed("_c4","asp_bucket").withColumnRenamed("_c5","loyalty_bucket").withColumnRenamed("_c6","txns").withColumnRenamed("_c7","searches").withColumnRenamed("_c8","fav_city").withColumnRenamed("_c9","city_search").withColumnRenamed("_c10","activity").withColumnRenamed("_c11","pscore")
 
 val indexer1 = new StringIndexer().setInputCol("ap_bucket").setOutputCol("ap_bucket_n")
-model_df = indexer.fit(model_df).transform(model_df)
+model_df = indexer1.fit(model_df).transform(model_df)
 model_df = model_df.drop(col("ap_bucket"))
 
 val indexer2 = new StringIndexer().setInputCol("asp_bucket").setOutputCol("asp_bucket_n") 
