@@ -4,6 +4,7 @@ from pydbgen import pydbgen
 import math
 import csv
 import datetime
+import sys
 
 pr = [0.63, 0.37]
 size = 10000
