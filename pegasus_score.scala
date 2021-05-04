@@ -15,7 +15,7 @@ val upSchema = StructType(Array(
     StructField("_c8", StringType, true)
   ))
 
-var up_df = spark.read.schema(upSchema).csv("Pegasus/user_profiling/")
+var up_df = spark.read.schema(upSchema).csv("/user/ak8257/Pegasus/user_profiling/")
 up_df = up_df.withColumnRenamed("_c0","user").withColumnRenamed("_c1","num_searches").withColumnRenamed("_c2","num_txn").withColumnRenamed("_c3","first_txn_date").withColumnRenamed("_c4","recency").withColumnRenamed("_c5","last_txn_date").withColumnRenamed("_c6","adgbt").withColumnRenamed("_c7","inactivity_ratio").withColumnRenamed("_c8","loyalty_bucket")
 
 val bdSchema = StructType(Array(
@@ -31,7 +31,7 @@ val bdSchema = StructType(Array(
     StructField("CheckOut", DateType, true)
   ))
 
-var bd_df = spark.read.option("header", "true").schema(bdSchema).csv("Pegasus/bounced_data/")
+var bd_df = spark.read.option("header", "true").schema(bdSchema).csv("/user/ak8257/Pegasus/bounced_data/")
 
 val transactionSchema = StructType(Array(
     StructField("UserName",StringType,true),
@@ -44,10 +44,10 @@ val transactionSchema = StructType(Array(
     StructField("BookingAmount", IntegerType, true),
     StructField("BookingID", StringType, true)
   ))
-var transaction_df = spark.read.option("header", "true").schema(transactionSchema).csv("Pegasus/transaction_data/")
+var transaction_df = spark.read.option("header", "true").schema(transactionSchema).csv("/user/ak8257/Pegasus/transaction_data/")
 
-var cm_df = spark.read.option("header", "true").csv("Pegasus/other_data/city_master.csv")
-var ch_df = spark.read.option("header", "true").csv("Pegasus/other_data/city_hotel_mapping.csv")
+var cm_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/other_data/city_master.csv")
+var ch_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/other_data/city_hotel_mapping.csv")
 
 
 bd_df.createOrReplaceTempView("bounced_data")
@@ -83,7 +83,6 @@ sqlCtx.sql(user_profile_2).createOrReplaceTempView("profiling_data")
 val fav_city = "SELECT a.UserName, a.CityName FROM (SELECT UserName,CityName, ROW_NUMBER() OVER (PARTITION BY UserName ORDER BY CityName DESC) rank FROM search_master where BouncedAt = 0) a WHERE a.rank = 1"
 sqlCtx.sql(fav_city).createOrReplaceTempView("fav_city")
 
-
-val model_query = "Select a.userid, a.super_userid, ( case when AP_Period = 0 then '0' when AP_Period = 1 then '1' when AP_Period between 2 and 5 then '2-5' when AP_Period between 6 and 10 then '6-10' when AP_Period between 11 and 30 then '11-30' when AP_Period between 31 and 60 then '31-60' when AP_Period > 60 then '>60' when AP_Period is null then 'NA' end ) as AP_Bucket, ( case when CityType is null then 'NA' else CityType end ) as city_type, ( case when ASP_Amount between 0 and 1000 then '0-1000' when ASP_Amount between 1001 and 2000 then '1001-2000' when ASP_Amount between 2001 and 5000 then '2001-5000' when ASP_Amount > 5000 then '>5000' when ASP_Amount is null then 'NA' end ) as ASP_bucket, ( case when loyalty_bucket is null then 'NA' else loyalty_bucket end ) as loyalty_bucket, txn, searches, ( case when b.CityName = e.CityName then 1 else 0 end ) as fav_city, city_search, activity from search_data a left join book_asp f on a.super_userid = f.super_userid left join hotel_search b on f.hotelid = b.hotelid left join profiling_data d on a.userid = d.user left join fav_city e on a.userid = e.UserName"
+val model_query = "Select a.userid, a.super_userid, ( case when AP_Period = 0 then '0' when AP_Period = 1 then '1' when AP_Period between 2 and 5 then '2-5' when AP_Period between 6 and 10 then '6-10' when AP_Period between 11 and 30 then '11-30' when AP_Period between 31 and 60 then '31-60' when AP_Period > 60 then '>60' when AP_Period is null then 'NA' end ) as AP_Bucket, ( case when CityType is null then 'NA' else CityType end ) as city_type, ( case when ASP_Amount between 0 and 1000 then '0-1000' when ASP_Amount between 1001 and 2000 then '1001-2000' when ASP_Amount between 2001 and 5000 then '2001-5000' when ASP_Amount > 5000 then '>5000' when ASP_Amount is null then 'NA' end ) as ASP_bucket, ( case when loyalty_bucket is null then 'NA' else loyalty_bucket end ) as loyalty_bucket, txn, searches, ( case when b.CityName = e.CityName then 1 else 0 end ) as fav_city, city_search, activity, (case when txn > 0 then 1 else 0 end) as pscore from search_data a left join book_asp f on a.super_userid = f.super_userid left join hotel_search b on f.hotelid = b.hotelid left join profiling_data d on a.userid = d.user left join fav_city e on a.userid = e.UserName"
 sqlCtx.sql(model_query).createOrReplaceTempView("model_data")
-sqlCtx.sql("select * from model_data").toDF().write.mode("overwrite").csv("Pegasus/pegasus_score/")
+sqlCtx.sql("select * from model_data").toDF().write.mode("overwrite").csv("/user/ak8257/Pegasus/pegasus_score/")
