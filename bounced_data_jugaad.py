@@ -7,7 +7,8 @@ import datetime
 import sys
 
 pr = [0.63, 0.37]
-size = sys.argv[1]
+# size = sys.argv[1]
+size = 10000
 size = int(size)
 
 class DataGenerator:
@@ -96,32 +97,66 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-myDataGen = DataGenerator(size)
-myDataFrame = myDataGen.genDataset()
-# myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
+# myDataGen = DataGenerator(size)
+# myDataFrame = myDataGen.genDataset()
+# # myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
 
+# CityD = pd.read_csv("other_data/city_master.csv", usecols = ["CityName","CityId"]).to_numpy()
+# citydetails = CityD[np.random.choice(CityD.shape[0], size, replace = True)]
+# d = pd.DataFrame(citydetails, columns=['CityName', 'CityId'])
+# myDataFrame = pd.concat([myDataFrame, d], axis=1)
+
+# # insert NumOfRooms to the dataframe
+# room_calculator = pd.DataFrame(data={'People': myDataFrame['NumOfPeople']})
+# room_calculator['People_2'] = (
+#     room_calculator['People']/2).apply(np.ceil).astype(int)
+# room_calculator['range'] = [
+#     list(range(i, j+1)) for i, j in room_calculator[['People_2', 'People']].values]
+# room_calculator.drop(['People_2', 'People'], axis=1)
+# room_calculator['Rooms'] = room_calculator['range'].apply(np.random.choice)
+# myDataFrame['NumofRooms'] = room_calculator['Rooms']
+# del room_calculator
+
+
+# # insert Checkout to the dataframe
+# randomInt = np.random.randint(1, 30, size=size)
+# randomtime = [np.timedelta64(z,'D') for z in randomInt]
+
+# myDataFrame['CheckOut'] = pd.to_datetime(myDataFrame['CheckIn']) + pd.to_timedelta(randomtime)
+
+# filename = 'bounced_data/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
+# myDataFrame.to_csv(filename, index=False)
+
+usernames = pd.read_csv('other_data/user_master.csv')['UserName'].head(3000).values.tolist()
 CityD = pd.read_csv("other_data/city_master.csv", usecols = ["CityName","CityId"]).to_numpy()
-citydetails = CityD[np.random.choice(CityD.shape[0], size, replace = True)]
-d = pd.DataFrame(citydetails, columns=['CityName', 'CityId'])
-myDataFrame = pd.concat([myDataFrame, d], axis=1)
 
-# insert NumOfRooms to the dataframe
-room_calculator = pd.DataFrame(data={'People': myDataFrame['NumOfPeople']})
-room_calculator['People_2'] = (
-    room_calculator['People']/2).apply(np.ceil).astype(int)
-room_calculator['range'] = [
-    list(range(i, j+1)) for i, j in room_calculator[['People_2', 'People']].values]
-room_calculator.drop(['People_2', 'People'], axis=1)
-room_calculator['Rooms'] = room_calculator['range'].apply(np.random.choice)
-myDataFrame['NumofRooms'] = room_calculator['Rooms']
-del room_calculator
+rows_to_append = []
+for username in usernames:
+    randomInt = np.random.randint(1, 7)
+    device_id = np.random.randint(1000000, 10000000)
+    flavour = np.random.choice(['Android', 'IOS'],p=[0.6, 0.4])
+    checkin = (datetime.datetime.now() + datetime.timedelta(np.random.randint(0, 40))).date()
+    checkout = checkin + datetime.timedelta(np.random.randint(0, 7))
+    timestamp = datetime.datetime.now() - datetime.timedelta(np.random.randint(0, 60))
+    numpeople = np.random.randint(1, 6)
+    numrooms = np.random.randint(np.ceil(numpeople/2), numpeople) if numpeople > 1 else 1
+    city = CityD[np.random.choice(CityD.shape[0],replace = True)]
+    cityname = city[0]
+    cityid = city[1]
+    for n in range(randomInt+1):
+        if n < randomInt:
+            ba = 0
+        else:
+            ba = np.random.choice([0,1], p=[0.3, 0.7])
+        timestamp = timestamp + datetime.timedelta(minutes=3)
+        # BouncedAt,UserName,TimeStamp,DeviceID,Flavor,CheckIn,NumOfPeople,CityName,CityId,NumofRooms,CheckOut
+        column = {"UserName": username, "BouncedAt": ba, "TimeStamp": timestamp, "DeviceID": device_id,
+                    "Flavor": flavour, "CheckIn": checkin, "NumOfPeople": numpeople, 
+                    "CityName": cityname, "CityId": cityid, "NumofRooms": numrooms, "CheckOut": checkout}
+        rows_to_append.append(column)
 
 
-# insert Checkout to the dataframe
-randomInt = np.random.randint(1, 30, size=size)
-randomtime = [np.timedelta64(z,'D') for z in randomInt]
-
-myDataFrame['CheckOut'] = pd.to_datetime(myDataFrame['CheckIn']) + pd.to_timedelta(randomtime)
-
+        
+myDataFrame = pd.DataFrame(rows_to_append)
 filename = 'bounced_data/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
 myDataFrame.to_csv(filename, index=False)
