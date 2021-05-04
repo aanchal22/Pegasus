@@ -4,10 +4,12 @@ from pydbgen import pydbgen
 import math
 import csv
 import datetime
+import sys
 
 pr = [0.63, 0.37]
 size = 10000
-
+size = sys.argv[1]
+size = int(size)
 
 class DataGenerator:
     def __init__(self, datasetSize=1):
@@ -17,7 +19,7 @@ class DataGenerator:
         self.username = pd.read_csv('other_data/user_master.csv')['UserName'].to_numpy()
 
     # Generate array of bounced-at levels, select b/w 0 & 1
-    def getBouncedAt(self, size, levels=[0, 1], prob=[0.5, 0.5]):
+    def getBouncedAt(self, size, levels=[0, 1], prob=[0.3, 0.7]):
         return (np.random.choice(levels, size=size, p=prob))
 
 

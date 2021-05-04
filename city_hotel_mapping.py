@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
 import uuid
+import sys
 
-size = 2000
+size = sys.argv[1]
+size = int(size)
 
 HotelName = ['Palm Woods', 'The Robe Hotel', 'Hotel City Lake', 'The Pink Sheet', 'Carpe Diem']
 

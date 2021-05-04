@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
 import uuid
+import sys
 
-size = 2000
+size = sys.argv[1]
+size = int(size)
 
 class DataGenerator:
     def __init__(self, datasetSize = 1):
