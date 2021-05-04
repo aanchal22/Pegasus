@@ -88,4 +88,4 @@ val pipelinePredictionDf = pipelineModel.transform(testData)
 
 val evaluator = new BinaryClassificationEvaluator().setLabelCol("label").setRawPredictionCol("prediction").setMetricName("areaUnderROC")
 val accuracy = evaluator.evaluate(pipelinePredictionDf)
-pipelineModel.write.overwrite().save("/user/ak8257/Pegasus/98percent")
+pipelineModel.write.overwrite().save("/user/ak8257/Pegasus/model")

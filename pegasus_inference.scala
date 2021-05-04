@@ -1,8 +1,6 @@
 import org.apache.spark.sql.types._
 import org.apache.spark.ml.feature.{StringIndexer, OneHotEncoder}
 import org.apache.spark.ml.feature.VectorAssembler
-// import org.apache.spark.ml.classification.LogisticRegression
-// import org.apache.spark.ml.classification.LogisticRegressionModel
 import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.sql.functions.rand
 import org.apache.spark.ml._
@@ -21,7 +19,7 @@ val modelSchema = StructType(Array(
     StructField("_c10", StringType, true)
   ))
 
-val logisticRegressionModelLoaded = PipelineModel.load("/user/ak8257/Pegasus/94percent")
+val logisticRegressionModelLoaded = PipelineModel.load("/user/ak8257/Pegasus/model")
 
 var model_df = spark.read.schema(modelSchema).csv("/user/ak8257/Pegasus/pegasus_score_inference/")
 model_df = model_df.withColumnRenamed("_c0","userid").withColumnRenamed("_c1","super_userid").withColumnRenamed("_c2","ap_bucket").withColumnRenamed("_c3","city_type").withColumnRenamed("_c4","asp_bucket").withColumnRenamed("_c5","loyalty_bucket").withColumnRenamed("_c6","pscore").withColumnRenamed("_c7","searches").withColumnRenamed("_c8","fav_city").withColumnRenamed("_c9","city_search").withColumnRenamed("_c10","activity")
