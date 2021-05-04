@@ -15,7 +15,7 @@ val upSchema = StructType(Array(
     StructField("_c8", StringType, true)
   ))
 
-var up_df = spark.read.schema(upSchema).csv("/user/ak8257/Pegasus/user_profiling/")
+var up_df = spark.read.schema(upSchema).csv("/user/ak8257/Pegasus/user_profiling_test/")
 up_df = up_df.withColumnRenamed("_c0","user").withColumnRenamed("_c1","num_searches").withColumnRenamed("_c2","num_txn").withColumnRenamed("_c3","first_txn_date").withColumnRenamed("_c4","recency").withColumnRenamed("_c5","last_txn_date").withColumnRenamed("_c6","adgbt").withColumnRenamed("_c7","inactivity_ratio").withColumnRenamed("_c8","loyalty_bucket")
 
 // val bdSchema = StructType(Array(
@@ -32,7 +32,7 @@ up_df = up_df.withColumnRenamed("_c0","user").withColumnRenamed("_c1","num_searc
 //     StructField("CheckOut", DateType, true)
 //   ))
 
-var bd_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/bounced_data/")
+var bd_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/bounced_data_test/")
 bd_df = bd_df.withColumn("BouncedAt",col("BouncedAt").cast(IntegerType))
 bd_df = bd_df.withColumn("TimeStamp",col("TimeStamp").cast(TimestampType))
 bd_df = bd_df.withColumn("CheckIn",col("CheckIn").cast(DateType))
@@ -52,7 +52,7 @@ bd_df = bd_df.withColumn("CheckOut",col("CheckOut").cast(DateType))
 //     StructField("BookingAmount", IntegerType, true),
 //     StructField("BookingID", StringType, true)
 //   ))
-var transaction_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/transaction_data/")
+var transaction_df = spark.read.option("header", "true").csv("/user/ak8257/Pegasus/transaction_data_test/")
 
 transaction_df = transaction_df.withColumn("CheckOut",col("CheckOut").cast(DateType))
 transaction_df = transaction_df.withColumn("TimeStamp",col("TimeStamp").cast(TimestampType))
@@ -90,9 +90,9 @@ val transaction_data = "Select HotelName, BookingAmount/RoomNights as ASP_Amount
 sqlCtx.sql(transaction_data).createOrReplaceTempView("book_asp")
 
 up_df.createOrReplaceTempView("user_profile")
-val user_profile_1 = "SELECT user, CASE WHEN inactivity_ratio IS NULL THEN 'Not_Available' ELSE CASE WHEN inactivity_ratio > 1 THEN 'very_low' WHEN inactivity_ratio BETWEEN 0.76 AND 1 THEN 'low' WHEN inactivity_ratio BETWEEN 0.51 AND 0.75 THEN 'mid' WHEN inactivity_ratio BETWEEN 0.26 AND 0.5 THEN 'high' WHEN inactivity_ratio BETWEEN 0 AND 0.25 THEN 'very_high' END END as activity, CASE WHEN num_searches!=0 THEN CASE WHEN float(num_searches)>0.5 THEN 1 ELSE 0 END ELSE 0 END AS dh_oriented_search, CASE WHEN num_txn!=0 THEN CASE WHEN float(num_txn)>0.5 THEN 1 ELSE 0 END ELSE 0 END AS dh_oriented_txn FROM user_profile"
+val user_profile_1 = "SELECT user, (CASE WHEN inactivity_ratio IS NULL THEN 'Not_Available' ELSE (CASE WHEN inactivity_ratio > 1 THEN 'very_low' WHEN inactivity_ratio BETWEEN 0.76 AND 1 THEN 'low' WHEN inactivity_ratio BETWEEN 0.51 AND 0.75 THEN 'mid' WHEN inactivity_ratio BETWEEN 0.26 AND 0.5 THEN 'high' WHEN inactivity_ratio BETWEEN 0 AND 0.25 THEN 'very_high' END) END) as activity FROM user_profile"
 sqlCtx.sql(user_profile_1).createOrReplaceTempView("profiling_data_1")
-val user_profile_2= "SELECT * FROM (SELECT * FROM (SELECT user, loyalty_bucket, first_txn_date FROM user_profile WHERE user IS NOT NULL GROUP BY 1,2,3) a left join profiling_data_1 b using (user))"
+val user_profile_2= "( SELECT * FROM ( SELECT user, loyalty_bucket, first_txn_date FROM user_profile WHERE user IS NOT NULL GROUP BY 1, 2, 3 ) a left join profiling_data_1 b using (user) )"
 sqlCtx.sql(user_profile_2).createOrReplaceTempView("profiling_data")
 
 val fav_city = "SELECT a.UserName, a.CityName, a.CityId FROM (SELECT UserName,CityName,CityId, ROW_NUMBER() OVER (PARTITION BY UserName ORDER BY CityId DESC) rank FROM search_master where BouncedAt = 0) a WHERE a.rank = 1"
@@ -100,4 +100,17 @@ sqlCtx.sql(fav_city).createOrReplaceTempView("fav_city")
 
 val model_query = "Select a.userid, a.super_userid, ( case when AP_Period = 0 then '0' when AP_Period = 1 then '1' when AP_Period between 2 and 5 then '2-5' when AP_Period between 6 and 10 then '6-10' when AP_Period between 11 and 30 then '11-30' when AP_Period between 31 and 60 then '31-60' when AP_Period > 60 then '>60' when AP_Period is null then 'NA' end ) as AP_Bucket, ( case when CityType is null then 'NA' else CityType end ) as city_type, ( case when ASP_Amount between 0 and 1000 then '0-1000' when ASP_Amount between 1001 and 2000 then '1001-2000' when ASP_Amount between 2001 and 5000 then '2001-5000' when ASP_Amount > 5000 then '>5000' when ASP_Amount is null then 'NA' end ) as ASP_bucket, ( case when loyalty_bucket is null then 'NA' else loyalty_bucket end ) as loyalty_bucket, txn, searches, ( case when b.CityId = e.CityId then 1 else 0 end ) as fav_city, city_search, activity, (case when txn > 0 then 1 else 0 end) as pscore from search_data a left join book_asp f on a.super_userid = f.super_userid left join hotel_search b on f.hotelid = b.hotelid left join profiling_data d on a.userid = d.user left join fav_city e on a.userid = e.UserName"
 sqlCtx.sql(model_query).createOrReplaceTempView("model_data")
-sqlCtx.sql("select * from model_data").toDF().write.mode("overwrite").csv("/user/ak8257/Pegasus/pegasus_score/")
+sqlCtx.sql("select * from model_data").toDF().write.mode("overwrite").csv("/user/ak8257/Pegasus/pegasus_score_test/")
+
+// import org.apache.hadoop.conf.Configuration
+// import org.apache.hadoop.fs.FileSystem
+// import org.apache.hadoop.fs.Path
+
+
+// val hadoopConf = new Configuration()
+// val hdfs = FileSystem.get(hadoopConf)
+
+// val srcPath = new Path("/home/ak8257/Pegasus/7036349_2021_05_04.csv")
+// val destPath = new Path("/user/ak8257/Pegasus/pegasus_score/7036349_2021_05_04_2.csv")
+
+// hdfs.copyFromLocalFile(srcPath, destPath)
