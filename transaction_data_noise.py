@@ -59,7 +59,7 @@ BouncedDataDF_filtered.loc[:, 'BookingID'] = myDataFrame['BookingID']
 df = BouncedDataDF_filtered.drop(columns=['index', 'BouncedAt'])
 
 #add hotelname to the file
-hotelname = pd.read_csv('other_data_n/city_hotel_mapping_n.csv')['HotelName'].to_numpy()
+hotelname = pd.read_csv('other_data/city_hotel_mapping.csv')['HotelName'].to_numpy()
 df.insert(loc = 4, column = 'HotelName', value = np.random.choice(hotelname, size = DFsize, replace=True))
 
 filename = 'transaction_data_n/transaction_data_%s.csv' % datetime.datetime.now().strftime('%s')

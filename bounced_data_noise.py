@@ -15,8 +15,8 @@ class DataGenerator:
     def __init__(self, datasetSize=1):
         self.pyDb = pydbgen.pydb()
         self.datasetSize = datasetSize
-        self.cityname = pd.read_csv('other_data_n/city_master_n.csv')['CityName'].to_numpy()
-        self.username = pd.read_csv('other_data_n/user_master_n.csv')['UserName'].to_numpy()
+        self.cityname = pd.read_csv('other_data/city_master.csv')['CityName'].to_numpy()
+        self.username = pd.read_csv('other_data/user_master.csv')['UserName'].to_numpy()
 
     # Generate array of bounced-at levels, select b/w 0 & 1
     def getBouncedAt(self, size, levels=[0, 1, None], prob=[(100-noise)/200, (100-noise)/200, noise/100]):
@@ -102,7 +102,7 @@ myDataGen = DataGenerator(size)
 myDataFrame = myDataGen.genDataset()
 # myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
 
-CityD = pd.read_csv("other_data_n/city_master_n.csv", usecols = ["CityName","CityId"]).to_numpy()
+CityD = pd.read_csv("other_data/city_master.csv", usecols = ["CityName","CityId"]).to_numpy()
 citydetails = CityD[np.random.choice(CityD.shape[0], size, replace = True)]
 d = pd.DataFrame(citydetails, columns=['CityName', 'CityId'])
 myDataFrame = pd.concat([myDataFrame, d], axis=1)
