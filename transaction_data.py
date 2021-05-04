@@ -27,7 +27,7 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName"])
+BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName", "CityId"])
 
 BouncedDataDF_filtered = BouncedDataDF[BouncedDataDF['BouncedAt'] == 0]
 BouncedDataDF_filtered = BouncedDataDF_filtered.reset_index()

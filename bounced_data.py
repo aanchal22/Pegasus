@@ -24,9 +24,6 @@ class DataGenerator:
     def getUserName(self, size):
         return (np.random.choice(self.username, size=size, replace=True))
 
-    # Generate array of citynames from city dataset table
-    def getCityName(self, size):
-        return (np.random.choice(self.cityname, size=size, replace=True))
 
     # Generate array of random timestamps
     def getTimeStamp(self, size, low=0, high=365):
@@ -87,7 +84,6 @@ class DataGenerator:
         data = {
             'BouncedAt': self.getBouncedAt(size),
             'UserName': self.getUserName(size),
-            'CityName': self.getCityName(size),
             'TimeStamp': self.getTimeStamp(size),
             'DeviceID': self.getDeviceID(size),
             'Flavor': self.getFlavor(size),
@@ -99,7 +95,12 @@ class DataGenerator:
 
 myDataGen = DataGenerator(size)
 myDataFrame = myDataGen.genDataset()
+myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
 
+CityD = pd.read_csv("other_data/city_master.csv", usecols = ["CityName","CityId"]).to_numpy()
+citydetails = CityD[np.random.choice(CityD.shape[0], size, replace = True)]
+d = pd.DataFrame(citydetails, columns=['CityName', 'CityId'])
+myDataFrame = pd.concat([myDataFrame, d], axis=1)
 
 # insert NumOfRooms to the dataframe
 room_calculator = pd.DataFrame(data={'People': myDataFrame['NumOfPeople']})

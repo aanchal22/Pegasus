@@ -4,6 +4,8 @@ from pydbgen import pydbgen
 import matplotlib.pyplot as plt
 import uuid
 
+size = 2000
+
 class DataGenerator:
     def __init__(self, datasetSize = 1):
         self.pyDb = pydbgen.pydb()
@@ -30,6 +32,6 @@ class DataGenerator:
         }
         return (pd.DataFrame(data))
 
-myDataGen = DataGenerator(2000)
+myDataGen = DataGenerator(size)
 myDataFrame = myDataGen.genDataset()
 myDataFrame.to_csv('other_data/city_master.csv', index = False)
