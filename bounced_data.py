@@ -7,7 +7,7 @@ import datetime
 import sys
 
 pr = [0.63, 0.37]
-size = 10000
+# size = 10000
 size = sys.argv[1]
 size = int(size)
 
@@ -123,5 +123,5 @@ randomtime = [np.timedelta64(z,'D') for z in randomInt]
 
 myDataFrame['CheckOut'] = pd.to_datetime(myDataFrame['CheckIn']) + pd.to_timedelta(randomtime)
 
-filename = 'bounced_data/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
+filename = 'bounced_data/bounced_data_random_%s.csv' % datetime.datetime.now().strftime('%s')
 myDataFrame.to_csv(filename, index=False)

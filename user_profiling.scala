@@ -1,11 +1,9 @@
-val bounced_files:String = "/user/ak8257/Pegasus/bounced_data_test/"
+val mode = "new"
+val bounced_files:String = "/user/ak8257/Pegasus/bounced_data_"+ mode +"/"
 val bounced_rdd = sc.textFile(bounced_files)
 
-val transaction_files:String = "/user/ak8257/Pegasus/transaction_data_test/"
+val transaction_files:String = "/user/ak8257/Pegasus/transaction_data_"+ mode +"/"
 val transaction_rdd = sc.textFile(transaction_files)
-
-val users_file:String = "/user/ak8257/Pegasus/other_data/user_master.csv"
-val users_rdd = sc.textFile(users_file)
 
 val header = bounced_rdd.first()
 val bounced_rdd_new = bounced_rdd.filter(row => row != header)
@@ -58,5 +56,5 @@ df_j = df_j.withColumn("inactivity_ratio", col("dfftd.datediff") / col("adgbt"))
 
 df_j = df_j.withColumn("loyalty_bucket", when($"dftxn.num_txn" >= 5, "Gold").otherwise(when($"dftxn.num_txn" > 2 && $"dftxn.num_txn" < 5, "Silver").otherwise(when($"dftxn.num_txn" < 2 && $"dftxn.num_txn" > 0, "Bronze").otherwise("New"))))
 
-df_j.write.mode("overwrite").csv("/user/ak8257/Pegasus/user_profiling_test/")
+df_j.write.mode("overwrite").csv("/user/ak8257/Pegasus/user_profiling_"+ mode +"/")
 
