@@ -12,7 +12,7 @@ prob = [(100-noise)/100, noise/100]
 
 HotelName = ['Palm Woods', 'The Robe Hotel', 'Hotel City Lake', 'The Pink Sheet', 'Carpe Diem']
 
-CityDF = pd.read_csv("other_data/city_master_n.csv", usecols = ["CityName","CityId"])
+CityDF = pd.read_csv("other_data_n/city_master_n.csv", usecols = ["CityName","CityId"])
 
 # insert NumOfRooms in the excel
 CityDF.insert(loc = 1, column = 'HotelName', value = 0)
