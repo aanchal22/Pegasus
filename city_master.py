@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
 import uuid
+import sys
 
 size = sys.argv[1]
 size = int(size)
