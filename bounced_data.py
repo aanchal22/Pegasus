@@ -7,7 +7,8 @@ import datetime
 
 pr = [0.63, 0.37]
 size = 10000
-
+size = sys.argv[1]
+size = int(size)
 
 class DataGenerator:
     def __init__(self, datasetSize=1):
