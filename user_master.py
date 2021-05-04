@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
+import sys
 
+size = sys.argv[1]
+size=int(size)
 class UserNameGenerator:
     def __init__(self, datasetSize = 1):
         self.pyDb = pydbgen.pydb()
@@ -17,6 +20,6 @@ class UserNameGenerator:
         }
         return (pd.DataFrame(data))
 
-usernameGen = UserNameGenerator(1000000)
+usernameGen = UserNameGenerator(size)
 usernameDF = usernameGen.genDataset()
 usernameDF.to_csv('other_data/user_master.csv', index = False)
