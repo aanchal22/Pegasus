@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from pydbgen import pydbgen
-import matplotlib.pyplot as plt
 
 class UserNameGenerator:
     def __init__(self, datasetSize = 1):
