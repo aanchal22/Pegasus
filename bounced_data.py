@@ -3,6 +3,7 @@ import numpy as np
 from pydbgen import pydbgen
 import math
 import csv
+import datetime
 
 pr = [0.63, 0.37]
 size = 10000
@@ -95,7 +96,7 @@ class DataGenerator:
 
 myDataGen = DataGenerator(size)
 myDataFrame = myDataGen.genDataset()
-myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
+# myDataFrame.insert(loc = 3, column = 'CityID', value = 0)
 
 CityD = pd.read_csv("other_data/city_master.csv", usecols = ["CityName","CityId"]).to_numpy()
 citydetails = CityD[np.random.choice(CityD.shape[0], size, replace = True)]
@@ -120,4 +121,5 @@ randomtime = [np.timedelta64(z,'D') for z in randomInt]
 
 myDataFrame['CheckOut'] = pd.to_datetime(myDataFrame['CheckIn']) + pd.to_timedelta(randomtime)
 
-myDataFrame.to_csv('bounced_data/bounced_data.csv', index=False)
+filename = 'bounced_data/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
+myDataFrame.to_csv(filename, index=False)

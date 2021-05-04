@@ -38,8 +38,6 @@ for csvfile in csvfiles:
     dataframes.append(df)
 BouncedDataDF = pd.concat(dataframes, ignore_index=True)
 
-# BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName"])
-
 BouncedDataDF_filtered = BouncedDataDF[BouncedDataDF['BouncedAt'] == 0]
 BouncedDataDF_filtered = BouncedDataDF_filtered.reset_index()
 DFsize = len(BouncedDataDF_filtered)
