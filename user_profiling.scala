@@ -26,7 +26,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.expressions.Window
 
 val e = transaction_rdd_new.keyBy(line => line.split(','))
-val a = e.map(u=>  (u._1(0), u._1(2)))
+val a = e.map(u=>  (u._1(0), u._1(1)))
 var df = a.toDF("user","txndate")
 df = df.withColumn("last_txn_date", df("txndate").cast(TimestampType)).drop("txndate")
 

@@ -3,6 +3,9 @@ import numpy as np
 from pydbgen import pydbgen
 import uuid
 import csv
+import os
+import glob
+import datetime
 
 class DataGenerator:
     def __init__(self, datasetSize = 1):
@@ -26,7 +29,16 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName", "CityId"])
+mycsvdir = 'bounced_data/'
+csvfiles = glob.glob(os.path.join(mycsvdir, '*.csv'))
+dataframes = []
+for csvfile in csvfiles:
+    df = pd.read_csv(csvfile, usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName", "CityId"])
+    # df[‘header’] = os.path.basename(csvfile).split(‘.’)[0]
+    dataframes.append(df)
+BouncedDataDF = pd.concat(dataframes, ignore_index=True)
+
+# BouncedDataDF = pd.read_csv("bounced_data/bounced_data.csv", usecols = ["UserName", "BouncedAt", "TimeStamp", "CheckIn", "CheckOut", "CityName"])
 
 BouncedDataDF_filtered = BouncedDataDF[BouncedDataDF['BouncedAt'] == 0]
 BouncedDataDF_filtered = BouncedDataDF_filtered.reset_index()
@@ -44,4 +56,5 @@ df = BouncedDataDF_filtered.drop(columns=['index', 'BouncedAt'])
 hotelname = pd.read_csv('other_data/city_hotel_mapping.csv')['HotelName'].to_numpy()
 df.insert(loc = 4, column = 'HotelName', value = np.random.choice(hotelname, size = DFsize, replace=True))
 
-df.to_csv('transaction_data/transaction_data.csv', index = False)
+filename = 'transaction_data/transaction_data_%s.csv' % datetime.datetime.now().strftime('%s')
+df.to_csv(filename, index = False)
