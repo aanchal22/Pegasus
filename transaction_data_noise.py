@@ -37,7 +37,7 @@ class DataGenerator:
         return (pd.DataFrame(data))
 
 
-mycsvdir = 'bounced_data_n/'
+mycsvdir = 'bounced_data_noise/'
 csvfiles = glob.glob(os.path.join(mycsvdir, '*.csv'))
 dataframes = []
 for csvfile in csvfiles:
@@ -62,5 +62,5 @@ df = BouncedDataDF_filtered.drop(columns=['index', 'BouncedAt'])
 hotelname = pd.read_csv('other_data/city_hotel_mapping.csv')['HotelName'].to_numpy()
 df.insert(loc = 4, column = 'HotelName', value = np.random.choice(hotelname, size = DFsize, replace=True))
 
-filename = 'transaction_data_n/transaction_data_%s.csv' % datetime.datetime.now().strftime('%s')
+filename = 'transacted_data_noise/transaction_data_%s.csv' % datetime.datetime.now().strftime('%s')
 df.to_csv(filename, index = False)

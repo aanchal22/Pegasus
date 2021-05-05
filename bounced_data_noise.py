@@ -124,5 +124,5 @@ randomtime = [np.timedelta64(z,'D') for z in randomInt]
 
 myDataFrame['CheckOut'] = pd.to_datetime(myDataFrame['CheckIn']) + pd.to_timedelta(randomtime)
 
-filename = 'bounced_data_n/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
+filename = 'bounced_data_noise/bounced_data_%s.csv' % datetime.datetime.now().strftime('%s')
 myDataFrame.to_csv(filename, index=False)
